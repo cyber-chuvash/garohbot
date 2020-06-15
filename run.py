@@ -1,17 +1,25 @@
 import re
+import json
 import random
 
 import requests
 import vk_requests
+
+from bot.keyboard import Keyboard, TextKeyboardButton
 
 
 class Bot:
     def __init__(self):
         self._lp_ts = self._lp_key = self._lp_server = None
 
-        self._API = vk_requests.create_api(service_token='aaeb61325aae0f0953f5530b10ae5542f5615b9e71c86748b9582ffa046a84acb8d4a90978cf677ae432c')
+        self._API = vk_requests.create_api(
+            service_token='aaeb61325aae0f0953f5530b10ae5542f5615b9e71c86748b9582ffa046a84acb8d4a90978cf677ae432c',
+            # service_token='8018e92cb870af996957dfa0ed5181732635b21815f88d47e1847d691c1c91631d45463fdd87f57409f78', # test
+            api_version="5.110"
+        )
 
     def get_long_poll_server(self):
+        # lps = self._API.groups.getLongPollServer(group_id=179532950)   # test
         lps = self._API.groups.getLongPollServer(group_id=180764984)
         self._lp_key, self._lp_server, self._lp_ts = lps['key'], lps['server'], lps['ts']
 
@@ -51,10 +59,35 @@ class Bot:
 
     def on_message(self, update):
         message = update['object']['message']
-        if re.search(r'г+[ао]+р+о+м?х+', message['text'], flags=re.IGNORECASE):
-            self._API.messages.send(peer_id=message['peer_id'], random_id=0, message='🤢' * random.randint(1, 5))
+        payload = json.loads(message['payload']) if "payload" in message else None
+
+        keyboard = None
+        if message['peer_id'] <= 2e9:
+            keyboard = Keyboard(
+                TextKeyboardButton(f'ГАР{"О" * random.randint(1, 4)}Х', {'command': 'garoh'}, color='positive')
+            ).get_vk_repr()
+
+        if (payload is not None and "command" in payload and payload['command'] == 'garoh') \
+                or re.search(r'г+[ао]+р+о+м?х+', message['text'], flags=re.IGNORECASE):
+            self._API.messages.send(
+                peer_id=message['peer_id'], random_id=0,
+                message='🤢' * random.randint(1, 5),
+                keyboard=keyboard
+            )
+
         elif re.search(r'🤢+', message['text'], flags=re.IGNORECASE):
-            self._API.messages.send(peer_id=message['peer_id'], random_id=0, message=f'гар{"о" * random.randint(1, 4)}х')
+            self._API.messages.send(
+                peer_id=message['peer_id'], random_id=0,
+                message=f'гар{"о" * random.randint(1, 4)}х',
+                keyboard=keyboard
+            )
+        elif (payload is not None and "command" in payload and payload['command'] == 'start') \
+                or re.search(r'начать', message['text'], flags=re.IGNORECASE):
+            self._API.messages.send(
+                peer_id=message['peer_id'], random_id=0,
+                message=f'Я гарох бот и я гарохю, могу и тебе нагарохить 🤢🤢',
+                keyboard=keyboard
+            )
 
     def run(self):
         self.get_long_poll_server()
