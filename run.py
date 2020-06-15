@@ -81,8 +81,9 @@ class Bot:
                 message=f'гар{"о" * random.randint(1, 4)}х',
                 keyboard=keyboard
             )
-        elif (payload is not None and "command" in payload and payload['command'] == 'start') \
-                or re.search(r'начать', message['text'], flags=re.IGNORECASE):
+        elif message['peer_id'] <= 2e9 and \
+                ((payload is not None and "command" in payload and payload['command'] == 'start')
+                 or re.search(r'начать', message['text'], flags=re.IGNORECASE)):
             self._API.messages.send(
                 peer_id=message['peer_id'], random_id=0,
                 message=f'Я гарох бот и я гарохю, могу и тебе нагарохить 🤢🤢',
