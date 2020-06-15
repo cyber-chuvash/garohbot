@@ -51,7 +51,7 @@ class Bot:
 
     def on_message(self, update):
         message = update['object']['message']
-        if re.search(r'г+[ао]+р+о+х+', message['text'], flags=re.IGNORECASE):
+        if re.search(r'г+[ао]+р+о+м?х+', message['text'], flags=re.IGNORECASE):
             self._API.messages.send(peer_id=message['peer_id'], random_id=0, message='🤢' * random.randint(1, 5))
         elif re.search(r'🤢+', message['text'], flags=re.IGNORECASE):
             self._API.messages.send(peer_id=message['peer_id'], random_id=0, message=f'гар{"о" * random.randint(1, 4)}х')
