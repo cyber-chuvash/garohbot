@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  garoh:
+    image: registry.gitlab.com/cyberchuvash/garohbot:1.1.2
+    env_file:
+      - .env
+    networks:
+      garohnet:
+
+networks:
+  garohnet:

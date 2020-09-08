@@ -1,4 +1,5 @@
 import re
+import os
 import json
 import random
 
@@ -8,19 +9,21 @@ import vk_requests
 from bot.keyboard import Keyboard, TextKeyboardButton
 
 
+VK_TOKEN = os.getenv('GAROH_VK_TOKEN')
+GROUP_ID = os.getenv('GAROH_GROUP_ID')
+
+
 class Bot:
     def __init__(self):
         self._lp_ts = self._lp_key = self._lp_server = None
 
         self._API = vk_requests.create_api(
-            service_token='aaeb61325aae0f0953f5530b10ae5542f5615b9e71c86748b9582ffa046a84acb8d4a90978cf677ae432c',
-            # service_token='8018e92cb870af996957dfa0ed5181732635b21815f88d47e1847d691c1c91631d45463fdd87f57409f78', # test
+            service_token=VK_TOKEN,
             api_version="5.110"
         )
 
     def get_long_poll_server(self):
-        # lps = self._API.groups.getLongPollServer(group_id=179532950)   # test
-        lps = self._API.groups.getLongPollServer(group_id=180764984)
+        lps = self._API.groups.getLongPollServer(group_id=GROUP_ID)
         self._lp_key, self._lp_server, self._lp_ts = lps['key'], lps['server'], lps['ts']
 
     def long_poll(self, wait=25):
@@ -105,4 +108,3 @@ class Bot:
 if __name__ == '__main__':
     b = Bot()
     b.run()
-
