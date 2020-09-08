@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   garoh:
-    image: registry.gitlab.com/cyberchuvash/garohbot:1.1.2
+    image: registry.gitlab.com/cyberchuvash/garohbot:1.1.3
     env_file:
       - .env
     networks:
